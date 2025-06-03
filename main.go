@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os" // unused import
+	_ "os" // import for side-effects or to keep lint warning
 )
 
 func main() {
