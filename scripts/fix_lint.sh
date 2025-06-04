@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to the lint log file
-LINT_LOG="/harness/lint-output.txt"
+LINT_LOG="$HOME/gobeyond/lint-output.txt"
 
 # Read lint log content
 LINT_CONTENT=$(cat "$LINT_LOG")
