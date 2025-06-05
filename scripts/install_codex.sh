@@ -28,11 +28,11 @@ npm install -g @openai/codex
 echo "✅ Codex installed. Verifying..."
 codex --version
 
-# Source all potential rc/profile files
-[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
-[ -f "$HOME/.bash_profile" ] && source "$HOME/.bash_profile"
-[ -f "$HOME/.profile" ] && source "$HOME/.profile"
-[ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
+# # Source all potential rc/profile files
+# [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+# [ -f "$HOME/.bash_profile" ] && source "$HOME/.bash_profile"
+# [ -f "$HOME/.profile" ] && source "$HOME/.profile"
+# [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
 
 # Path to the lint log file
 LINT_LOG="$HOME/gobeyond/lint-output.txt"
