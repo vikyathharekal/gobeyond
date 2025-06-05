@@ -29,7 +29,7 @@ echo "✅ Codex installed. Verifying..."
 codex --version
 
 # Set up workspace
-WORKDIR="$HOME/gobeyond"
+WORKDIR="$HOME/home/hackweek/gobeyond"
 cd "$WORKDIR"
 
 # Save current Git state
@@ -41,9 +41,9 @@ LINT_LOG="$WORKDIR/lint-output.txt"
 LINT_CONTENT=$(cat "$LINT_LOG")
 
 echo "📄 Preparing Codex prompt..."
-PROMPT_FILE="$WORKDIR/codex_prompt.txt"
+#PROMPT_FILE="$WORKDIR/codex_prompt.txt"
 
-cat <<EOF > "$PROMPT_FILE"
+PROMPT_FILE="
 You are a strict, deterministic Go linter fixer. You will directly apply changes to Go source files based on the following golangci-lint log.
 
 ## Objective:
@@ -67,10 +67,10 @@ Apply lint fixes to the actual Go codebase files, not as suggestions or examples
 $LINT_CONTENT
 
 Now modify the source files accordingly and apply the fixes in place.
-EOF
+"
 
 echo "🚀 Running Codex to fix lint issues..."
-codex -a full-auto --model gpt-4.1 --fullAutoErrorMode ignore-and-continue --inputFile "$PROMPT_FILE" --workdir "$WORKDIR"
+codex -q -a full-auto --model gpt-4.1 --fullAutoErrorMode ignore-and-continue --workdir "$WORKDIR" "$PROMPT_FILE"
 
 echo "🎨 Formatting Go code after changes..."
 go fmt ./...
