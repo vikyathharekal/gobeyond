@@ -43,7 +43,7 @@ LINT_CONTENT=$(cat "$LINT_LOG")
 echo "Processing Lint logs ..."
 echo "$LINT_CONTENT"
 
-codex -a auto-edit --model gpt-4.1 --fullAutoErrorMode ignore-and-continue "
+codex -q -a full-auto --model gpt-4.1 --fullAutoErrorMode ignore-and-continue "
 You are a strict, deterministic Go linter fixer. You will directly apply changes to Go source files based on the following golangci-lint log.
 
 ## Objective:
