@@ -19,7 +19,7 @@ nvm install 22
 nvm use 22
 nvm alias default 22
 
-# Update PATH again in case it's needed
+# Update PATH
 export PATH="$NVM_DIR/versions/node/v22.*/bin:$PATH"
 
 echo "📦 Installing @openai/codex CLI..."
@@ -28,22 +28,22 @@ npm install -g @openai/codex
 echo "✅ Codex installed. Verifying..."
 codex --version
 
-# # Source all potential rc/profile files
-# [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
-# [ -f "$HOME/.bash_profile" ] && source "$HOME/.bash_profile"
-# [ -f "$HOME/.profile" ] && source "$HOME/.profile"
-# [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
+# Set up workspace
+WORKDIR="$HOME/gobeyond"
+cd "$WORKDIR"
+
+# Save current Git state
+echo "🔧 Stashing current changes if any..."
+git diff > "$WORKDIR/codex-pre.patch" || true
 
 # Path to the lint log file
-LINT_LOG="$HOME/gobeyond/lint-output.txt"
-
-# Read lint log content
+LINT_LOG="$WORKDIR/lint-output.txt"
 LINT_CONTENT=$(cat "$LINT_LOG")
 
-echo "Processing Lint logs ..."
-echo "$LINT_CONTENT"
+echo "📄 Preparing Codex prompt..."
+PROMPT_FILE="$WORKDIR/codex_prompt.txt"
 
-codex -q -a full-auto --model gpt-4.1 --fullAutoErrorMode ignore-and-continue "
+cat <<EOF > "$PROMPT_FILE"
 You are a strict, deterministic Go linter fixer. You will directly apply changes to Go source files based on the following golangci-lint log.
 
 ## Objective:
@@ -61,30 +61,21 @@ Apply lint fixes to the actual Go codebase files, not as suggestions or examples
 - Edits must be deterministic and reproducible.
 - Do not skip any errors unless marked to ignore.
 
-## Examples:
-
-### Example 1:
-**Lint Log:**
-main.go:12:2: fmt imported but not used (unused)
-
-**Fix:**
-Open `main.go`, go to line 12, and remove the unused `fmt` import.
-
-### Example 2:
-**Lint Log:**
-main.go:45:6: don't use underscores in Go names; func my_function should be myFunction (revive)
-
-**Fix:**
-Rename the function `my_function` to `myFunction` on line 45 of `main.go`.
-
 ---
 
 ## 🔧 Lint log input:
 $LINT_CONTENT
 
 Now modify the source files accordingly and apply the fixes in place.
-"
+EOF
 
-echo "Formatting GO code after applying changes..."  
+echo "🚀 Running Codex to fix lint issues..."
+codex -a full-auto --model gpt-4.1 --fullAutoErrorMode ignore-and-continue --inputFile "$PROMPT_FILE" --workdir "$WORKDIR"
+
+echo "🎨 Formatting Go code after changes..."
 go fmt ./...
 
+echo "🔍 Capturing git diff..."
+git diff > "$WORKDIR/codex-diff.patch"
+
+echo "✅ Done. Changes saved in: $WORKDIR/codex-diff.patch"
