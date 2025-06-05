@@ -44,21 +44,22 @@ echo "Processing Lint logs ..."
 echo "$LINT_CONTENT"
 
 codex -q -a auto-edit --model gpt-4.1 --fullAutoErrorMode ignore-and-continue "
-You are a deterministic Go linter fixer designed to process and fix issues reported by golangci-lint.
+You are a strict, deterministic Go linter fixer. You will directly apply changes to Go source files based on the following golangci-lint log.
 
 ## Objective:
-Fix lint errors in the Go codebase strictly according to the golangci-lint log provided, using idiomatic Go best practices.
+Apply lint fixes to the actual Go codebase files, not as suggestions or examples. All changes must be made directly in-place, modifying the original files exactly where needed.
 
 ## Constraints:
-- Only modify the **specific files and lines** mentioned in the lint log.
-- **Do not** alter unrelated code or unrelated lines within a touched file.
-- Make the **minimal change necessary** to resolve each lint error.
-- **Do not** reorder or reformat imports unless explicitly required by the lint error (e.g., gci, goimports).
-- Do **not** restructure functions or rewrite logic unless required to fix the lint issue.
-- Preserve formatting and indentation as much as possible. If any code is added, it should adhere with golang formatting
-- Do **not** introduce changes that are not directly fixing the lint errors.
-- You must produce the **same output** when run on the same input multiple times.
-- No speculative fixes; only fix issues that are explicitly described.
+- Only modify **exact files and lines** referenced in the lint log.
+- Apply the **minimum code change** necessary to resolve each issue.
+- **Do not** suggest fixes — directly apply them to the code.
+- Do not change code outside of lines explicitly required to fix.
+- Do not reformat imports unless required by a specific lint rule.
+- Avoid structural rewrites unless demanded by the lint warning.
+- Adhere strictly to idiomatic Go best practices and formatting.
+- Do not include explanations or surrounding context — only edit the code.
+- Edits must be deterministic and reproducible.
+- Do not skip any errors unless marked to ignore.
 
 ## Examples:
 
@@ -67,26 +68,23 @@ Fix lint errors in the Go codebase strictly according to the golangci-lint log p
 main.go:12:2: fmt imported but not used (unused)
 
 **Fix:**
-Remove the fmt import from main.go.
+Open `main.go`, go to line 12, and remove the unused `fmt` import.
 
 ### Example 2:
 **Lint Log:**
 main.go:45:6: don't use underscores in Go names; func my_function should be myFunction (revive)
 
 **Fix:**
-Rename the function my_function to myFunction on line 45 of main.go.
+Rename the function `my_function` to `myFunction` on line 45 of `main.go`.
 
-### Example 3:
-**Lint Log:**
-utils/log.go:10:2: File is not goimports-formatted (goimports)
-
-**Fix:**
-Reorder and group imports correctly in utils/log.go.
 ---
 
-Now fix the issues in the codebase based on the following golangci-lint output:
-
+## 🔧 Lint log input:
 $LINT_CONTENT
+
+Now modify the source files accordingly and apply the fixes in place.
 "
+
+echo "Formatting GO code after applying changes..."  
 go fmt ./...
 
