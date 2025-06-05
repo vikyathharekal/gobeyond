@@ -75,7 +75,7 @@ codex -q -a full-auto --model gpt-4.1 --fullAutoErrorMode ignore-and-continue --
 echo "🎨 Formatting Go code after changes..."
 go fmt ./...
 
-echo "🔍 Capturing git diff..."
-git diff > "$WORKDIR/codex-diff.patch"
+# echo "🔍 Capturing git diff..."
+# git diff > "$WORKDIR/codex-diff.patch"
 
-echo "✅ Done. Changes saved in: $WORKDIR/codex-diff.patch"
+# echo "✅ Done. Changes saved in: $WORKDIR/codex-diff.patch"
