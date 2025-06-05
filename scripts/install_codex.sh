@@ -29,7 +29,7 @@ echo "✅ Codex installed. Verifying..."
 codex --version
 
 # Set up workspace
-WORKDIR="$HOME/home/hackweek/gobeyond"
+WORKDIR="$HOME/gobeyond"
 cd "$WORKDIR"
 
 # Save current Git state
